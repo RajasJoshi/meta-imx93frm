@@ -1,0 +1,125 @@
+header:
+  version: 8
+
+machine: raspberrypi4-64
+distro: poky
+target:
+  - rpi-test-image
+
+repos:
+  meta-raspberry:
+
+  bitbake:
+    url: https://git.openembedded.org/bitbake
+    path: layers/bitbake
+    branch: master
+    layers:
+      bitbake: disabled
+
+  openembedded-core:
+    url: https://git.openembedded.org/openembedded-core
+    path: layers/openembedded-core
+    branch: master
+    layers:
+      meta:
+
+  meta-yocto:
+    url: https://git.yoctoproject.org/meta-yocto
+    path: layers/meta-yocto
+    branch: master
+    layers:
+      meta-poky:
+      meta-yocto-bsp:
+
+  meta-openembedded:
+    url: http://git.openembedded.org/meta-openembedded
+    path: layers/meta-openembedded
+    branch: master
+    layers:
+      meta-oe:
+      meta-python:
+      meta-networking:
+
+  meta-swupdate:
+    url: https://github.com/sbabic/meta-swupdate.git
+    path: layers/meta-swupdate
+    branch: master
+
+  meta-clang:
+    url: https://github.com/kraj/meta-clang.git
+    path: layers/meta-clang
+    branch: master
+
+  meta-browser:
+    url: https://github.com/OSSystems/meta-browser.git
+    path: layers/meta-browser
+    branch: master
+    layers:
+      meta-chromium:
+
+bblayers_conf_header:
+  standard: |
+    POKY_BBLAYERS_CONF_VERSION = "2"
+    BBPATH = "${TOPDIR}"
+    BBFILES ?= ""
+local_conf_header:
+  reduce_diskspace: |
+    INHERIT += "rm_work"
+  standard: |
+    CONF_VERSION = "2"
+    PACKAGE_CLASSES = "package_rpm"
+    SDKMACHINE = "x86_64"
+    USER_CLASSES = "buildstats"
+    PATCHRESOLVE = "noop"
+  debug-tweaks: |
+    IMAGE_FEATURES += "empty-root-password allow-empty-password allow-root-login post-install-logging"
+  smartflower: |
+    IMAGE_FSTYPES = " ext4.gz wic wic.bz2"
+    DISTRO_FEATURES:append = " wifi systemd usrmerge opengl x11"
+    DISTRO_FEATURES:remove = " pulseaudio bluetooth sysvinit"
+    DISTRO_FEATURES_OPTED_OUT += " sysvinit"
+    VIRTUAL-RUNTIME_init_manager = " systemd"
+    VIRTUAL-RUNTIME_initscripts = " systemd-compat-units"
+    CMDLINE_DEBUG = "fbcon=logo-count:0 vt.global_cursor_default=0"
+    PACKAGECONFIG:append:pn-chromium-x11 = " kiosk-mode"
+    PACKAGECONFIG:pn-xserver-nodm-init = "nocursor"
+    PREFERRED_VERSION:mini-x-session = "0.1.smf"
+    PREFERRED_PROVIDER:u-boot-fw-utils = "libubootenv"
+    ENABLE_DWC2_HOST = "1"
+    ENABLE_UART = "1"
+    DISABLE_RPI_BOOT_LOGO = "1"
+    RPI_USE_U_BOOT = "1"
+    ENABLE_I2C = "1"
+    DISABLE_SPLASH = "1"
+    BOOT_DELAY = "0"
+    BOOT_DELAY_MS = "0"
+    DISABLE_OVERSCAN = "1"
+    VC4DTBO = "vc4-kms-v3d-pi4"
+    HDMI_DRIVE = "1"
+    HDMI_GROUP = "2"
+    HDMI_MODE = "87"
+    HDMI_CVT = "800 480 60 6 0 0 0"
+    GPU_MEM_1024 = "914"
+    RPI_KERNEL_DEVICETREE_OVERLAYS:append = " overlays/uart3.dtbo overlays/i2c-rtc.dtbo overlays/sc16is750-i2c.dtbo"
+    RPI_EXTRA_CONFIG = ' \n \
+    dtoverlay=disable-bt \n \
+    dtoverlay=uart3 \n \
+    dtoverlay=vc4-kms-v3d-pi4 \n \
+    dtoverlay=i2c-rtc,pcf8563,i2c_csi_dsi,addr=0x51 \n \
+    dtoverlay=sc16is750-i2c,int_pin=17,addr=0x49,xtal=3686400 \n \
+    dtparam=i2c_vc=on \n \
+        '
+  diskmon: |
+    BB_DISKMON_DIRS = "\
+        STOPTASKS,${TMPDIR},1G,100K \
+        STOPTASKS,${DL_DIR},1G,100K \
+        STOPTASKS,${SSTATE_DIR},1G,100K \
+        STOPTASKS,/tmp,100M,100K \
+        HALT,${TMPDIR},100M,1K \
+        HALT,${DL_DIR},100M,1K \
+        HALT,${SSTATE_DIR},100M,1K \
+        HALT,/tmp,10M,1K"
+  license: |
+    # Uncomment next line to allow the license
+    # See: linux-firmware-rpidistro in docs/ipcompliance.md
+    LICENSE_FLAGS_ACCEPTED = "synaptics-killswitch"

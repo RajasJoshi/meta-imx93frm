@@ -1,0 +1,127 @@
+header:
+  version: 14
+
+machine: imx93-11x11-lpddr4x-frdm
+distro: fsl-imx-xwayland
+target: imx-image-core
+
+repos:
+  bitbake:
+    url: https://github.com/openembedded/bitbake
+    path: layers/bitbake
+    commit: 6e511d035a3d1e4129dab7b0dfbf216bd8e99b47
+    layers:
+      bitbake: disabled
+
+  openembedded-core:
+    url: https://github.com/openembedded/openembedded-core
+    path: layers/openembedded-core
+    commit: 9964fa3da2fa1e7243fba1a826e59f7bb1813706
+    layers:
+      meta:
+
+  meta-yocto:
+    url: "https://git.yoctoproject.org/meta-yocto"
+    commit: "d02d3faaf4d6075ea03e9eb47654ec7639f929a0"
+    path: layers/meta-yocto
+    layers:
+      meta-poky:
+      meta-yocto-bsp:
+
+  meta-openembedded:
+    url: "https://github.com/openembedded/meta-openembedded"
+    commit: "a4e768dcfae181dd99e39c4286fa0729ca7f4e47"
+    path: layers/meta-openembedded
+    layers:
+      meta-oe:
+      meta-multimedia:
+      meta-networking:
+      meta-python:
+      meta-filesystems:
+      meta-perl:
+
+  meta-clang:
+    url: "https://github.com/kraj/meta-clang"
+    commit: "cf20f8bd1366d41094c945597b95dd746e87b871"
+    path: layers/meta-clang
+
+  meta-freescale:
+    url: "https://github.com/Freescale/meta-freescale"
+    commit: "2781242e499e601ef9454009aceed16186a48d9e"
+    path: layers/meta-freescale
+
+  meta-freescale-3rdparty:
+    url: "https://github.com/Freescale/meta-freescale-3rdparty"
+    commit: "b2b1987841018013006f909f817a3e9b034c6227"
+    path: layers/meta-freescale-3rdparty
+
+  meta-freescale-distro:
+    url: "https://github.com/Freescale/meta-freescale-distro"
+    commit: "8001652aa3e2c6436c2bfce744e99f398c680858"
+    path: layers/meta-freescale-distro
+
+  meta-arm:
+    url: "https://git.yoctoproject.org/meta-arm"
+    commit: "3752c4e4478a6dbdf7a722a261d16ebc7a4a99e5"
+    path: layers/meta-arm
+    layers:
+      meta-arm:
+      meta-arm-toolchain:
+
+  meta-qt6:
+    url: "https://github.com/YoeDistro/meta-qt6"
+    commit: "be7fddeb123706f9ef428e1248e9bfa3c0ba3953"
+    path: layers/meta-qt6
+
+  meta-browser:
+    url: "https://github.com/OSSystems/meta-browser"
+    commit: "26ce9f7e67880ffb819c4012e89a8863c5f853ba"
+    path: layers/meta-browser
+    layers:
+      meta-chromium:
+
+  meta-security:
+    url: "https://git.yoctoproject.org/meta-security"
+    commit: "3b93a09d528fd93995a15c4994de92759b057b15"
+    path: layers/meta-security
+
+  meta-timesys:
+    url: "https://github.com/TimesysGit/meta-timesys"
+    commit: "e0ce07084184e33d68058858276a0b9400c0d0c1"
+    path: layers/meta-timesys
+
+  meta-virtualization:
+    url: "https://git.yoctoproject.org/meta-virtualization"
+    commit: "b9a29d2423407c1e50f19dc3f3e154d164c5f0ec"
+    path: layers/meta-virtualization
+
+  meta-imx:
+    url: "https://github.com/nxp-imx/meta-imx"
+    commit: "refs/tags/rel_imx_6.18.2_1.0.0"
+    path: layers/meta-imx
+    layers:
+      meta-imx-bsp:
+      meta-imx-sdk:
+      meta-imx-v2x:
+      meta-imx-cockpit:
+
+  meta-nxp-connectivity:
+    url: "https://github.com/nxp-imx/meta-nxp-connectivity"
+    commit: "refs/tags/rel_imx_6.18.2_1.0.0"
+    path: layers/meta-nxp-connectivity
+    layers:
+      meta-nxp-matter-baseline:
+      meta-nxp-openthread:
+
+  meta-nxp-demo-experience:
+    url: "https://github.com/nxp-imx-support/meta-nxp-demo-experience"
+    commit: "refs/tags/rel_imx_6.18.2_1.0.0"
+    path: layers/meta-nxp-demo-experience
+  
+  meta-customlayer:
+
+local_conf_header:
+  nxp-eula: |
+    ACCEPT_FSL_EULA = "1"
+  debug-tweaks: |
+    IMAGE_FEATURES += "empty-root-password allow-empty-password allow-root-login post-install-logging"
