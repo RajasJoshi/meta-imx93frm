@@ -1,0 +1,100 @@
+software =
+{
+	version = "1.0";
+	description = "FRDM-IMX93 A/B OTA update";
+
+	hardware-compatibility: [ "1.0" ];
+
+	imx93frdm: {
+
+		stable: {
+
+			/* ---- Slot A : boot p1, rootfs p3 ---- */
+			dualA: {
+				files: (
+                    {
+                        filename = "Image";
+                        path = "/Image";
+                        sha256 = "$swupdate_get_sha256(Image)";
+                        device = "/dev/mmcblk1p1";
+                        filesystem = "vfat";
+                        installed-directly = true;
+                    },
+                    {
+                        filename = "imx93-11x11-frdm.dtb";
+                        path = "/imx93-11x11-frdm.dtb";
+                        sha256 = "$swupdate_get_sha256(imx93-11x11-frdm.dtb)";
+                        device = "/dev/mmcblk1p1";
+                        filesystem = "vfat";
+                        installed-directly = true;
+                    },
+                    {
+                        filename = "tee.bin";
+                        path = "/tee.bin";
+                        sha256 = "$swupdate_get_sha256(tee.bin)";
+                        device = "/dev/mmcblk1p1";
+                        filesystem = "vfat";
+                        installed-directly = true;
+                    }
+                );
+                images: (
+                    {
+                        filename = "swupdate-image-@@MACHINE@@.rootfs.ext4.gz";
+                        sha256 = "$swupdate_get_sha256(swupdate-image-@@MACHINE@@.rootfs.ext4.gz)";
+                        device = "/dev/mmcblk1p2";
+                        compressed = "zlib";
+                        installed-directly = true;
+                    }
+                );
+                bootenv: (
+                    { name = "bootslot";          value = "dualA"; },
+                    { name = "upgrade_available"; value = "1"; },
+                    { name = "bootcount";         value = "0"; }
+                );
+			};
+
+			dualB: {
+                files: (
+                    {
+                        filename = "Image";
+                        path = "/Image";
+                        sha256 = "$swupdate_get_sha256(Image)";
+                        device = "/dev/mmcblk1p3";
+                        filesystem = "vfat";
+                        installed-directly = true;
+                    },
+                    {
+                        filename = "imx93-11x11-frdm.dtb";
+                        path = "/imx93-11x11-frdm.dtb";
+                        sha256 = "$swupdate_get_sha256(imx93-11x11-frdm.dtb)";
+                        device = "/dev/mmcblk1p3";
+                        filesystem = "vfat";
+                        installed-directly = true;
+                    },
+                    {
+                        filename = "tee.bin";
+                        path = "/tee.bin";
+                        sha256 = "$swupdate_get_sha256(tee.bin)";
+                        device = "/dev/mmcblk1p3";
+                        filesystem = "vfat";
+                        installed-directly = true;
+                    }
+                );
+                images: (
+                    {
+                        filename = "swupdate-image-@@MACHINE@@.rootfs.ext4.gz";
+                        sha256 = "$swupdate_get_sha256(swupdate-image-@@MACHINE@@.rootfs.ext4.gz)";
+                        device = "/dev/mmcblk1p4";
+                        compressed = "zlib";
+                        installed-directly = true;
+                    }
+                );
+                bootenv: (
+                    { name = "bootslot";          value = "dualB"; },
+                    { name = "upgrade_available"; value = "1"; },
+                    { name = "bootcount";         value = "0"; }
+                );
+            };
+		};
+	}
+}

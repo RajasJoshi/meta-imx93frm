@@ -1,0 +1,3 @@
+bootslot=dualA
+bootcount=0
+upgrade_available=0
