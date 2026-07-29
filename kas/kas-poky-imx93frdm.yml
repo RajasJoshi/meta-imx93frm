@@ -3,29 +3,28 @@ header:
 
 machine: imx93-11x11-lpddr4x-frdm
 distro: fsl-imx-wayland
-target: 
+target:
   - swupdate-image
   - update-image
-
 
 repos:
   bitbake:
     url: https://github.com/openembedded/bitbake
     path: layers/bitbake
-    commit: 6e511d035a3d1e4129dab7b0dfbf216bd8e99b47
+    commit: a2dd9be788274d9c7280be5b1be5eb5c3990cf54
     layers:
       bitbake: disabled
 
   openembedded-core:
     url: https://github.com/openembedded/openembedded-core
     path: layers/openembedded-core
-    commit: 9964fa3da2fa1e7243fba1a826e59f7bb1813706
+    commit: 42fa856a00ac16b2a7a83d7ecfa60a5be192b16c
     layers:
       meta:
 
   meta-yocto:
     url: "https://git.yoctoproject.org/meta-yocto"
-    commit: "d02d3faaf4d6075ea03e9eb47654ec7639f929a0"
+    commit: "904846ae078ee20de073040ebb77c86e19250f56"
     path: layers/meta-yocto
     layers:
       meta-poky:
@@ -33,7 +32,7 @@ repos:
 
   meta-openembedded:
     url: "https://github.com/openembedded/meta-openembedded"
-    commit: "a4e768dcfae181dd99e39c4286fa0729ca7f4e47"
+    commit: "420222862f5a6d95023b8f5f3b7e1808b2264ef9"
     path: layers/meta-openembedded
     layers:
       meta-oe:
@@ -45,27 +44,32 @@ repos:
 
   meta-clang:
     url: "https://github.com/kraj/meta-clang"
-    commit: "cf20f8bd1366d41094c945597b95dd746e87b871"
+    commit: "78c5e12f08198f4f257a9348516d2103cd617c1d"
     path: layers/meta-clang
 
   meta-freescale:
     url: "https://github.com/Freescale/meta-freescale"
-    commit: "2781242e499e601ef9454009aceed16186a48d9e"
+    commit: "3949624f36cbc5b7fd4033ce5ef001d83fc1a3e9"
     path: layers/meta-freescale
 
   meta-freescale-3rdparty:
     url: "https://github.com/Freescale/meta-freescale-3rdparty"
-    commit: "b2b1987841018013006f909f817a3e9b034c6227"
+    commit: "3358b11ef81d52b9c9972d454dd43c120cbbdaf5"
     path: layers/meta-freescale-3rdparty
 
   meta-freescale-distro:
     url: "https://github.com/Freescale/meta-freescale-distro"
-    commit: "8001652aa3e2c6436c2bfce744e99f398c680858"
+    commit: "70b7591ecaa99cb6366f93ee05df7c38d94d724b"
     path: layers/meta-freescale-distro
+
+  meta-freescale-ml:
+    url: "https://github.com/Freescale/meta-freescale-ml"
+    commit: "1330790bc6cdd3808260a16383d928e05a0e0eeb"
+    path: layers/meta-freescale-ml
 
   meta-arm:
     url: "https://git.yoctoproject.org/meta-arm"
-    commit: "3752c4e4478a6dbdf7a722a261d16ebc7a4a99e5"
+    commit: "4112fda50b814ad6e3cfaefe5cad78a83114599a"
     path: layers/meta-arm
     layers:
       meta-arm:
@@ -73,46 +77,60 @@ repos:
 
   meta-qt6:
     url: "https://github.com/YoeDistro/meta-qt6"
-    commit: "be7fddeb123706f9ef428e1248e9bfa3c0ba3953"
+    commit: "3cd8b59a1303b3c079f5345c6b2555d1037925f6"
     path: layers/meta-qt6
 
   meta-browser:
     url: "https://github.com/OSSystems/meta-browser"
-    commit: "26ce9f7e67880ffb819c4012e89a8863c5f853ba"
+    commit: "407e3ac990f5ed466cb76e5002f918860503799c"
     path: layers/meta-browser
     layers:
       meta-chromium:
 
   meta-security:
     url: "https://git.yoctoproject.org/meta-security"
-    commit: "3b93a09d528fd93995a15c4994de92759b057b15"
+    commit: "9265f142f3890df2d00d71d13b19e95a082707ed"
     path: layers/meta-security
 
   meta-timesys:
     url: "https://github.com/TimesysGit/meta-timesys"
-    commit: "e0ce07084184e33d68058858276a0b9400c0d0c1"
+    commit: "240d59556180ff72efbfd105393abdee544f7282"
     path: layers/meta-timesys
 
   meta-virtualization:
     url: "https://git.yoctoproject.org/meta-virtualization"
-    commit: "b9a29d2423407c1e50f19dc3f3e154d164c5f0ec"
+    commit: "022f4356d4a9b389f51472d40a9330aa59f6bb9a"
     path: layers/meta-virtualization
 
   meta-imx:
     url: "https://github.com/nxp-imx/meta-imx"
-    commit: "refs/tags/rel_imx_6.18.2_1.0.0"
+    commit: "refs/tags/rel_imx_6.18.20_2.0.0"
     path: layers/meta-imx
     layers:
       meta-imx-bsp:
       meta-imx-sdk:
       meta-imx-v2x:
       meta-imx-cockpit:
+
+  meta-nxp-connectivity:
+    url: "https://github.com/nxp-imx/meta-nxp-connectivity"
+    commit: "refs/tags/rel_imx_6.18.20_2.0.0"
+    path: layers/meta-nxp-connectivity
+    layers:
+      meta-nxp-matter-baseline:
+      meta-nxp-openthread:
+
+  meta-nxp-demo-experience:
+    url: "https://github.com/nxp-imx-support/meta-nxp-demo-experience"
+    commit: "refs/tags/rel_imx_6.18.20_2.0.0"
+    path: layers/meta-nxp-demo-experience
+
   meta-swupdate:
     url: "https://github.com/sbabic/meta-swupdate.git"
-    branch: whinlatter
+    branch: wrynose
     path: layers/meta-swupdate
 
-  meta-customlayer:
+  meta-imx93frdm:
 
 local_conf_header:
   nxp-eula: |

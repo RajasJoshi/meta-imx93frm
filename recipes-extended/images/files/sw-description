@@ -1,100 +1,88 @@
-software =
-{
-	version = "1.0";
-	description = "FRDM-IMX93 A/B OTA update";
+software = {
+    version = "2.0.0";
+    description = "FRDM-IMX93 A/B OTA (no rescue tier)";
 
-	hardware-compatibility: [ "1.0" ];
+    hardware-compatibility: [ "1.0" ];
 
-	imx93frdm: {
+    stable: {
+        /* ---- writes slot B (run this when A is active) ---- */
+        slot_b: {
+            files: (
+                {
+                    filename = "fitImage";
+                    path = "/fitImage";
+                    sha256 = "$swupdate_get_sha256(fitImage)";
+                    device = "/dev/mmcblk1p2";          /* boot_b */
+                    filesystem = "vfat";
+                }
+            );
+            images: (
+                {
+                    filename = "swupdate-image-@@MACHINE@@.rootfs.ext4.gz";
+                    sha256 = "$swupdate_get_sha256(swupdate-image-@@MACHINE@@.rootfs.ext4.gz)";
+                    device = "/dev/mmcblk1p4";          /* root_b */
+                    compressed = "zlib";
+                    installed-directly = true;
+                }
+            );
+            scripts: (
+                {
+                    filename = "preinst.sh";
+                    type = "shellscript";
+                    sha256 = "$swupdate_get_sha256(preinst.sh)";
+                },
+                {
+                    filename = "postinst.sh";
+                    type = "shellscript";
+                    sha256 = "$swupdate_get_sha256(postinst.sh)";
+                }
+            );
+            bootenv: (
+                { name = "boot_slot";         value = "B"; },
+                { name = "upgrade_available"; value = "1"; },
+                { name = "bootcount";         value = "0"; },
+                { name = "fallback_done";     value = "0"; }
+            );
+        };
 
-		stable: {
-
-			/* ---- Slot A : boot p1, rootfs p3 ---- */
-			dualA: {
-				files: (
-                    {
-                        filename = "Image";
-                        path = "/Image";
-                        sha256 = "$swupdate_get_sha256(Image)";
-                        device = "/dev/mmcblk1p1";
-                        filesystem = "vfat";
-                        installed-directly = true;
-                    },
-                    {
-                        filename = "imx93-11x11-frdm.dtb";
-                        path = "/imx93-11x11-frdm.dtb";
-                        sha256 = "$swupdate_get_sha256(imx93-11x11-frdm.dtb)";
-                        device = "/dev/mmcblk1p1";
-                        filesystem = "vfat";
-                        installed-directly = true;
-                    },
-                    {
-                        filename = "tee.bin";
-                        path = "/tee.bin";
-                        sha256 = "$swupdate_get_sha256(tee.bin)";
-                        device = "/dev/mmcblk1p1";
-                        filesystem = "vfat";
-                        installed-directly = true;
-                    }
-                );
-                images: (
-                    {
-                        filename = "swupdate-image-@@MACHINE@@.rootfs.ext4.gz";
-                        sha256 = "$swupdate_get_sha256(swupdate-image-@@MACHINE@@.rootfs.ext4.gz)";
-                        device = "/dev/mmcblk1p2";
-                        compressed = "zlib";
-                        installed-directly = true;
-                    }
-                );
-                bootenv: (
-                    { name = "bootslot";          value = "dualA"; },
-                    { name = "upgrade_available"; value = "1"; },
-                    { name = "bootcount";         value = "0"; }
-                );
-			};
-
-			dualB: {
-                files: (
-                    {
-                        filename = "Image";
-                        path = "/Image";
-                        sha256 = "$swupdate_get_sha256(Image)";
-                        device = "/dev/mmcblk1p3";
-                        filesystem = "vfat";
-                        installed-directly = true;
-                    },
-                    {
-                        filename = "imx93-11x11-frdm.dtb";
-                        path = "/imx93-11x11-frdm.dtb";
-                        sha256 = "$swupdate_get_sha256(imx93-11x11-frdm.dtb)";
-                        device = "/dev/mmcblk1p3";
-                        filesystem = "vfat";
-                        installed-directly = true;
-                    },
-                    {
-                        filename = "tee.bin";
-                        path = "/tee.bin";
-                        sha256 = "$swupdate_get_sha256(tee.bin)";
-                        device = "/dev/mmcblk1p3";
-                        filesystem = "vfat";
-                        installed-directly = true;
-                    }
-                );
-                images: (
-                    {
-                        filename = "swupdate-image-@@MACHINE@@.rootfs.ext4.gz";
-                        sha256 = "$swupdate_get_sha256(swupdate-image-@@MACHINE@@.rootfs.ext4.gz)";
-                        device = "/dev/mmcblk1p4";
-                        compressed = "zlib";
-                        installed-directly = true;
-                    }
-                );
-                bootenv: (
-                    { name = "bootslot";          value = "dualB"; },
-                    { name = "upgrade_available"; value = "1"; },
-                    { name = "bootcount";         value = "0"; }
-                );
-            };
-		};
-	}
-}
+        /* ---- writes slot A (run this when B is active) ---- */
+        slot_a: {
+            files: (
+                {
+                    filename = "fitImage";
+                    path = "/fitImage";
+                    sha256 = "$swupdate_get_sha256(fitImage)";
+                    device = "/dev/mmcblk1p1";          /* boot_a */
+                    filesystem = "vfat";
+                }
+            );
+            images: (
+                {
+                    filename = "swupdate-image-@@MACHINE@@.rootfs.ext4.gz";
+                    sha256 = "$swupdate_get_sha256(swupdate-image-@@MACHINE@@.rootfs.ext4.gz)";
+                    device = "/dev/mmcblk1p3";          /* root_a */
+                    compressed = "zlib";
+                    installed-directly = true;
+                }
+            );
+            scripts: (
+                {
+                    filename = "preinst.sh";
+                    type = "shellscript";
+                    sha256 = "$swupdate_get_sha256(preinst.sh)";
+                },
+                {
+                    filename = "postinst.sh";
+                    type = "shellscript";
+                    sha256 = "$swupdate_get_sha256(postinst.sh)";
+                }
+            );
+            bootenv: (
+                { name = "boot_slot";         value = "A"; },
+                { name = "upgrade_available"; value = "1"; },
+                { name = "bootcount";         value = "0"; },
+                { name = "fallback_done";     value = "0"; }
+            );
+        };
+    };
+};

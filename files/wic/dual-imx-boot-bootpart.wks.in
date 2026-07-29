@@ -1,0 +1,13 @@
+part imx-boot --source rawcopy --sourceparams="file=imx-boot-${MACHINE}-sd.bin-flash_singleboot" --no-table --offset 32k
+
+part u-boot-env --source rawcopy --sourceparams="file=uboot-env.bin" --ondisk mmcblk1 --no-table --offset 8192 --fixed-size 128K
+
+part --source bootimg-partition --ondisk mmcblk1 --fstype=vfat --label boot_a --offset 10240 --fixed-size ${BOOT_PARTITION_SIZE_MIB}
+part --source bootimg-partition --ondisk mmcblk1 --fstype=vfat --label boot_b --fixed-size ${BOOT_PARTITION_SIZE_MIB}
+
+part --source rootfs --ondisk mmcblk1 --fstype=ext4 --label root_a --fixed-size ${ROOTFS_PARTITION_SIZE_MIB}
+part --source rootfs --ondisk mmcblk1 --fstype=ext4 --label root_b --fixed-size ${ROOTFS_PARTITION_SIZE_MIB}
+
+part --ondisk mmcblk1 --fstype=ext4 --label data --fixed-size ${DATA_PARTITION_SIZE_MIB}
+
+bootloader --ptable gpt

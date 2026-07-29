@@ -1,0 +1,258 @@
+Upstream-Status: Inappropriate [i.MX swupdate specific enablement]
+From 687e86a1561273ff78821223e646a68551797188 Mon Sep 17 00:00:00 2001
+From: Rajas Joshi <rajasj99@gmail.com>
+Date: Wed, 29 Jul 2026 19:27:12 +0100
+Subject: [PATCH] imx93-swupdate-update
+
+---
+ board/nxp/imx93_frdm/imx93_frdm.c   |   4 +
+ board/nxp/imx93_frdm/imx93_frdm.env | 164 ++++++++++++----------------
+ configs/imx93_11x11_frdm_defconfig  |  14 ++-
+ 3 files changed, 83 insertions(+), 99 deletions(-)
+
+diff --git a/board/nxp/imx93_frdm/imx93_frdm.c b/board/nxp/imx93_frdm/imx93_frdm.c
+index 9c6678131c4..2d7148f2c27 100644
+--- a/board/nxp/imx93_frdm/imx93_frdm.c
++++ b/board/nxp/imx93_frdm/imx93_frdm.c
+@@ -21,6 +21,8 @@
+ #include <dwc3-uboot.h>
+ #include <asm/gpio.h>
+ #include <adc.h>
++#include <timestamp.h>
++#include <version.h>
+ 
+ DECLARE_GLOBAL_DATA_PTR;
+ 
+@@ -325,6 +327,8 @@ int board_late_init(void)
+ 	env_set("sec_boot", "yes");
+ #endif
+ 
++env_set("u-boot_version", PLAIN_VERSION"("U_BOOT_DATE"-"U_BOOT_TIME")");
++
+ #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
+ 	env_set("board_name", "11X11_FRDM");
+ 	env_set("board_rev", "iMX93");
+diff --git a/board/nxp/imx93_frdm/imx93_frdm.env b/board/nxp/imx93_frdm/imx93_frdm.env
+index 8dee8b63ba4..2986b2af275 100644
+--- a/board/nxp/imx93_frdm/imx93_frdm.env
++++ b/board/nxp/imx93_frdm/imx93_frdm.env
+@@ -1,5 +1,4 @@
+ /* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+-
+ #include <env/nxp/imx_env.env>
+ 
+ initrd_addr=0x83800000
+@@ -7,103 +6,76 @@ initrd_high=0xffffffffffffffff
+ emmc_dev=0
+ sd_dev=1
+ 
+-#ifdef CONFIG_AHAB_BOOT
+-sec_boot=yes
+-#else
+-sec_boot=no
+-#endif
+-
+-nodes=/usbg1 /usbg2 /wdt-reboot /display-subsystem /ldb-phy /soc@0/system-controller@4ac10000 /soc@0/ldb@4ac10020 /soc@0/phy@4ac10024 /soc@0/dsi@4ae10000 /soc@0/lcd-controller@4ae30000 /soc@0/bus@44000000/i2c@44350000/pmic@25 /soc@0/bus@44000000/tmu@44482000 /soc@0/bus@44000000/i2c@44340000/lvds-to-hdmi-bridge@4c
+-sr_ir_v2_cmd=cp.b ${fdtcontroladdr} ${fdt_addr_r} 0x10000;
+-	fdt addr ${fdt_addr_r};
+-	for i in ${nodes}; do fdt rm ${i}; done
+-
+-jh_root_dtb=imx93-11x11-frdm-root.dtb
+-jh_mmcboot=setenv fdtfile ${jh_root_dtb};
+-	setenv jh_clk kvm.enable_virt_at_load=false clk_ignore_unused mem=1248MB kvm-arm.mode=nvhe;
+-	if run loadimage; then run mmcboot;
+-	else run jh_netboot; fi;
+-jh_netboot=setenv fdtfile ${jh_root_dtb};
+-	setenv jh_clk kvm.enable_virt_at_load=false clk_ignore_unused mem=1248MB kvm-arm.mode=nvhe; run netboot;
+-
+-boot_targets=usb0 mmc0 mmc1 dhcp
+-boot_fit=no
+-bootm_size=0x10000000
+-splashimage=0x90000000
+-cntr_addr=0x98000000
+-cntr_file=os_cntr_signed.bin
+ console=ttyLP0,115200 earlycon
+ fdt_addr_r=0x83000000
+-fdt_addr=0x83000000
+-fdtfile=CONFIG_DEFAULT_FDT_FILE
+-image=Image
+-mmcdev=CONFIG_ENV_MMC_DEVICE_INDEX
+-mmcpart=1
+-mmcroot=/dev/mmcblk1p2 rootwait rw
+-mmcautodetect=yes
+-mmcargs=setenv bootargs ${jh_clk} ${mcore_clk} console=${console} root=${mmcroot}
+-prepare_mcore=setenv mcore_clk clk-imx93.mcore_booted
++loadaddr=CONFIG_SYS_LOAD_ADDR
+ kernel_addr_r=CONFIG_SYS_LOAD_ADDR
+-loadbootscript=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};
+-bootscript=echo Running bootscript from mmc ...; source
+-loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}
+-loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr_r} ${fdtfile}
+-loadcntr=fatload mmc ${mmcdev}:${mmcpart} ${cntr_addr} ${cntr_file}
+-auth_os=booti ${cntr_addr}
+-boot_os=booti ${loadaddr} - ${fdt_addr_r}
+-mmcboot=
+-	echo Booting from mmc ...;
+-	run mmcargs;
+-	if test ${sec_boot} = yes; then
+-		run auth_os;
+-	else
+-		if run loadfdt; then
+-			run boot_os;
+-		else
+-			echo WARN: Cannot load the DT;
+-		fi;
+-	fi;
+-netargs=setenv bootargs ${jh_clk} ${mcore_clk} console=${console} root=/dev/nfs
+-	ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp
++bootm_size=0x10000000
++splashimage=0x90000000
++
++prepare_mcore=setenv mcore_clk clk-imx93.mcore_booted
++mmcdev=1
++fit_file=fitImage
++fit_load_addr=0x88000000
++boot_slot=A
++fallback_done=0
++upgrade_available=0
++bootcount=0
++bootlimit=3
++setslot=if test "${boot_slot}" = "A"; then \
++        setenv bootpart 1; setenv rootpart 3; \
++    else \
++        setenv bootpart 2; setenv rootpart 4; \
++    fi
++ 
++mmcargs=setenv bootargs ${mcore_clk} console=${console} \
++    root=/dev/mmcblk${mmcdev}p${rootpart} rootwait rw
++ 
++flip_slot=if test "${boot_slot}" = "A"; then setenv boot_slot B; \
++    else setenv boot_slot A; fi
++
++loadfit=fatload mmc ${mmcdev}:${bootpart} ${fit_load_addr} ${fit_file}
++mmcboot=run setslot; \
++    echo Booting slot ${boot_slot} (part ${bootpart}) ...; \
++    run mmcargs; \
++    if run loadfit; then \
++        bootm ${fit_load_addr}; \
++    else \
++        echo WARN: cannot load FIT from slot ${boot_slot}; \
++        reset; \
++    fi
++
++bootcmd=run mmcboot
++
++altbootcmd=if test "${upgrade_available}" != "1"; then \
++        echo No trial pending - booting normally; \
++        run mmcboot; \
++    else \
++        echo altbootcmd: trial failed on slot ${boot_slot}; \
++        if test "${fallback_done}" = "1"; then \
++            echo both slots failed their trials - halting for manual recovery; \
++            echo reflash via UUU or replace SD card; \
++            while true; do sleep 10; done; \
++        else \
++            run flip_slot; \
++            setenv fallback_done 1; \
++            setenv bootcount 0; \
++            saveenv; \
++            echo falling back to slot ${boot_slot}; \
++            run mmcboot; \
++        fi; \
++    fi
++
++netargs=setenv bootargs ${mcore_clk} console=${console} root=/dev/nfs \
++    ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp
+ netboot=
+-	echo Booting from net ...;
+-	run netargs;
+-	if test ${ip_dyn} = yes; then
+-		setenv get_cmd dhcp;
+-	else
+-		setenv get_cmd tftp;
+-	fi;
+-	if test ${sec_boot} = yes; then
+-		${get_cmd} ${cntr_addr} ${cntr_file};
+-		run auth_os;
+-	else
+-		${get_cmd} ${loadaddr} ${image};
+-		if ${get_cmd} ${fdt_addr_r} ${fdtfile}; then
+-			run boot_os;
+-		else
+-			echo WARN: Cannot load the DT;
+-		fi;
+-	fi;
+-bsp_bootcmd=
+-	echo Running BSP bootcmd ...;
+-	mmc dev ${mmcdev};
+-	if mmc rescan; then
+-		if run loadbootscript; then
+-			run bootscript;
+-		else
+-			if test ${sec_boot} = yes; then
+-				if run loadcntr; then
+-					run mmcboot;
+-				else
+-					run netboot;
+-				fi;
+-			else
+-				if run loadimage; then
+-					run mmcboot;
+-				else
+-					run netboot;
+-				fi;
+-			fi;
+-		fi;
+-	fi;
++    echo Booting from net ...;
++    run netargs;
++    if test ${ip_dyn} = yes; then
++        setenv get_cmd dhcp;
++    else
++        setenv get_cmd tftp;
++    fi;
++    ${get_cmd} ${fit_load_addr} ${fit_file};
++    bootm ${fit_load_addr}
+ scriptaddr=0x83500000
+diff --git a/configs/imx93_11x11_frdm_defconfig b/configs/imx93_11x11_frdm_defconfig
+index ba53ad3762b..34453ab1c0e 100644
+--- a/configs/imx93_11x11_frdm_defconfig
++++ b/configs/imx93_11x11_frdm_defconfig
+@@ -6,8 +6,10 @@ CONFIG_SYS_MALLOC_F_LEN=0x18000
+ CONFIG_SPL_LIBCOMMON_SUPPORT=y
+ CONFIG_SPL_LIBGENERIC_SUPPORT=y
+ CONFIG_NR_DRAM_BANKS=2
+-CONFIG_ENV_SIZE=0x4000
+-CONFIG_ENV_OFFSET=0x700000
++CONFIG_ENV_SIZE=0x200000
++CONFIG_ENV_OFFSET=0x800000
++CONFIG_ENV_OFFSET_REDUND=0x820000
++CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
+ CONFIG_DM_GPIO=y
+ CONFIG_DEFAULT_DEVICE_TREE="imx93-11x11-frdm"
+ CONFIG_USB_TCPC=y
+@@ -209,6 +211,10 @@ CONFIG_VIDEO_LOGO=y
+ CONFIG_VIDEO_LCD_RAYDIUM_RM67191=y
+ CONFIG_VIDEO_ADV7535=y
+ CONFIG_SYS_WHITE_ON_BLACK=y
++CONFIG_BOOTCOUNT_LIMIT=y
++CONFIG_BOOTCOUNT_ENV=y
++CONFIG_SYS_MMC_ENV_DEV=1
++CONFIG_SYS_MMC_ENV_PART=0
+ CONFIG_SPLASH_SCREEN=y
+ CONFIG_SPLASH_SCREEN_ALIGN=y
+ CONFIG_CMD_BMP=y
+@@ -216,7 +222,9 @@ CONFIG_CMD_BMP=y
+ CONFIG_CMD_DEKBLOB=y
+ CONFIG_IMX_ELE_DEK_ENCAP=y
+ CONFIG_SPL_RSA=y
+-CONFIG_LEGACY_IMAGE_FORMAT=y
++CONFIG_RSA=y
++CONFIG_SPL_LOAD_FIT=y
++CONFIG_LEGACY_IMAGE_FORMAT=n
+ CONFIG_EFI_SECURE_BOOT=y
+ CONFIG_EFI_IGNORE_OSINDICATIONS=y
+ CONFIG_EFI_CAPSULE_AUTHENTICATE=y
+-- 
+2.43.0
+
