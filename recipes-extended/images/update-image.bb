@@ -16,6 +16,9 @@ SWUPDATE_IMAGES = "fitImage swupdate-image"
 SWUPDATE_IMAGES_FSTYPES[fitImage] = ""
 SWUPDATE_IMAGES_FSTYPES[swupdate-image] = ".rootfs.ext4.gz"
 
+SWUPDATE_IMAGES_ENCRYPTED[fitImage] = "1"
+SWUPDATE_IMAGES_ENCRYPTED[swupdate-image] = "1"
+
 BOOT_FILES ?= "fitImage"
 
 do_stage_swu_artifacts() {

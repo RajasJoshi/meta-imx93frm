@@ -14,6 +14,8 @@ software = {
                     sha256 = "$swupdate_get_sha256(fitImage)";
                     device = "/dev/mmcblk1p2";          /* boot_b */
                     filesystem = "vfat";
+                    encrypted = true;
+                    ivt = "ff28037cc45a8117c4e10c3d110bfb27";
                 }
             );
             images: (
@@ -23,6 +25,8 @@ software = {
                     device = "/dev/mmcblk1p4";          /* root_b */
                     compressed = "zlib";
                     installed-directly = true;
+                    encrypted = true;
+                    ivt = "ff28037cc45a8117c4e10c3d110bfb27";
                 }
             );
             scripts: (
@@ -54,6 +58,8 @@ software = {
                     sha256 = "$swupdate_get_sha256(fitImage)";
                     device = "/dev/mmcblk1p1";          /* boot_a */
                     filesystem = "vfat";
+                    encrypted = true;
+                    ivt = "ff28037cc45a8117c4e10c3d110bfb27";
                 }
             );
             images: (
@@ -63,6 +69,8 @@ software = {
                     device = "/dev/mmcblk1p3";          /* root_a */
                     compressed = "zlib";
                     installed-directly = true;
+                    encrypted = true;
+                    ivt = "ff28037cc45a8117c4e10c3d110bfb27";
                 }
             );
             scripts: (
