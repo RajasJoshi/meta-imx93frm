@@ -1,0 +1,9 @@
+# 99-usb-automount.rules
+# Automount USB mass-storage partitions via systemd-mount (automount, lazy)
+ACTION=="add", SUBSYSTEM=="block", KERNEL=="sd[a-z][0-9]", \
+    ENV{ID_BUS}=="usb", \
+    RUN+="/usr/bin/systemd-mount --no-block --automount=yes --collect -o noatime,sync,nofail $devnode /mnt/usb-%k"
+
+ACTION=="remove", SUBSYSTEM=="block", KERNEL=="sd[a-z][0-9]", \
+    ENV{ID_BUS}=="usb", \
+    RUN+="/usr/bin/systemd-umount /mnt/usb-%k"
