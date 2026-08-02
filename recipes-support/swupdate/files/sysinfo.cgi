@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "Content-type: text/html"
 echo ""
@@ -9,7 +9,7 @@ echo '<title>system information</title>'
 echo '</head>'
 echo '<body>'
 echo "$(uname -a) </br>"
-echo $(cat /proc/cmdline)
+echo "$(cat /proc/cmdline)"
 echo '</body>'
 echo '</html>'
 exit 0

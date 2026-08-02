@@ -9,6 +9,7 @@ SRC_URI += " \
     file://swu_aes.key \
     file://0001-mongoose-enable-cgi.patch \
     file://sysinfo.cgi \
+    file://ab-updater.sh \
 "
 
 FILES:${PN} += " \
@@ -16,9 +17,10 @@ FILES:${PN} += " \
     ${sysconfdir}/swupdate.cfg \
     ${sysconfdir}/swu_public.pem \
     ${sysconfdir}/swu_aes.key \
+    ${bindir}/ab-updater.sh \
 "
 
-RDEPENDS:${PN}-www += "bash"
+RDEPENDS:${PN} += "libubootenv-bin"
 
 SYSTEMD_SERVICE:${PN} += "swupdate-sysrestart.service"
 
@@ -28,4 +30,5 @@ do_install:append() {
     install -m 0600 ${UNPACKDIR}/swu_aes.key    ${D}${sysconfdir}/swu_aes.key
     install -m 0644 ${UNPACKDIR}/swupdate-sysrestart.service ${D}${systemd_system_unitdir}/swupdate-sysrestart.service
     install -m 0755 ${UNPACKDIR}/sysinfo.cgi ${D}/www/sysinfo.cgi
+    install -m 0755 ${UNPACKDIR}/ab-updater.sh ${D}${bindir}/ab-updater.sh
 }
